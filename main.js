@@ -9,7 +9,7 @@ btnAddGrup.addEventListener("click", () => {
 
 btnAddTask.addEventListener("click", modal);
 
-function createGrup(title, tasks) {
+function createGrup(title, tasks, position) {
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
 
@@ -42,6 +42,7 @@ function createGrup(title, tasks) {
     // console.log(grupTask);
     grupTask["containerTask"] =
       e.currentTarget.parentElement.parentElement.parentElement;
+
     modal("grup-task", grupTask);
   });
 
@@ -76,7 +77,13 @@ function createGrup(title, tasks) {
   container.classList.add("list__item--grup");
   container.append(divMain, containerTask);
 
-  list.appendChild(container);
+  if (position !== undefined) {
+    console.log(position);
+
+    list.replaceChild(container, list.children[position]);
+  } else {
+    list.appendChild(container);
+  }
 }
 
 function createTask(description, containerTask) {
@@ -199,7 +206,7 @@ function modal(type, editGrup = {}) {
   btnConfirm.type = "button";
   btnConfirm.innerText = "Aceptar";
   btnConfirm.addEventListener("click", (e) => {
-    type ? accept(e, type) : accept(e);
+    type ? accept(e, type, editGrup.containerTask) : accept(e);
   });
 
   const btnCancel = document.createElement("button");
@@ -241,7 +248,7 @@ function cancel(e) {
   modal.remove();
   containerBtnAddTask.style.display = "block";
 }
-function accept(e, type) {
+function accept(e, type, containerTask) {
   const modal = e.currentTarget.parentElement.parentElement.parentElement;
   if (type === "grup-task") {
     let title;
@@ -258,8 +265,11 @@ function accept(e, type) {
         tasks.push(input.children[0].value);
       }
     });
-
-    createGrup(title, tasks);
+    if (containerTask === undefined) {
+      createGrup(title, tasks);
+    } else {
+      editGrup(containerTask, title, tasks);
+    }
   } else {
     const containerInputs =
       e.currentTarget.parentElement.parentElement.previousElementSibling;
@@ -279,8 +289,13 @@ function deleteTask(e) {
   deleteTask.remove();
 }
 function editTask() {}
-function editGrup(container) {
-  console.log(container);
+function editGrup(container, title, tasks) {
+  const index = Array.from(list.children).indexOf(container);
+  createGrup(title, tasks, index);
+  // container.firstElementChild.firstElementChild.children[2].innerText = title;
+  // Array.from(container.children[1].children).forEach((element, index) => {
+  //   element.firstElementChild.children[1].innerText = tasks[index];
+  // });
 }
 
 function showTasks() {}
@@ -310,6 +325,8 @@ function showTasks() {}
 // repasar los estados http
 // investigar sobre peticiones http
 // repasar como trabajar con objetos , por ejemplo como iterarlos y como saber si estan vacio
+// investigar como trabajar con cookies y por que son importantes
 
 // los imput tiene que poder tner saltos de linea y ser un poco mas largo (opcional)
 // hay que verificar que los inputs no esten vacios o si estan vacios que no creee nada
+//
