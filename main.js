@@ -24,26 +24,25 @@ function createGrup(title, tasks, position) {
   const btnEdit = document.createElement("button");
   btnEdit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
   btnEdit.addEventListener("click", (e) => {
-    // const grupTask = [];
-    const grupTask = {};
+    const component = e.currentTarget.parentElement.parentElement.parentElement;
 
+    const grupTask = {};
     const titleGrup =
       e.currentTarget.parentElement.previousElementSibling.children[2]
         .innerText;
     grupTask["title"] = titleGrup;
-    // grupTask.push(titleGrup);
+
     const grup = e.currentTarget.parentElement.parentElement.nextElementSibling;
 
     Array.from(grup.children).forEach((element, index) => {
       let task = element.innerText;
       grupTask[`task${index + 1}`] = task;
-      // grupTask.push(task);
     });
-    // console.log(grupTask);
-    grupTask["containerTask"] =
-      e.currentTarget.parentElement.parentElement.parentElement;
 
-    modal("grup-task", grupTask);
+    grupTask["containerTask"] = Array.from(list.children).indexOf(component);
+    if (!document.querySelector(".modal")) {
+      modal("grup-task", grupTask);
+    }
   });
 
   const btnDelete = document.createElement("button");
@@ -109,7 +108,11 @@ function createTask(description, containerTask) {
 
   const divBtns = document.createElement("div");
   divBtns.classList.add("list__btns");
-  divBtns.append(btnEdit, btnDelete);
+  if (!containerTask) {
+    divBtns.appendChild(btnEdit);
+  }
+
+  divBtns.appendChild(btnDelete);
 
   li.append(divInfo, divBtns);
 
@@ -170,7 +173,7 @@ function modal(type, editGrup = {}) {
     containerInputs.appendChild(inputTitle);
   }
   if (Object.keys(editGrup).length !== 0) {
-    inputDescription.value = editGrup.task1;
+    inputDescription.value = editGrup.task1 === undefined ? "" : editGrup.task1;
   }
   containerInputs.appendChild(inputDescription);
 
@@ -185,6 +188,7 @@ function modal(type, editGrup = {}) {
         }
       }
     }
+    // Array.from(list.children).indexOf(editGrup.containerTask).remove();
   }
 
   const btnAdd = document.createElement("button");
@@ -212,7 +216,13 @@ function modal(type, editGrup = {}) {
   const btnCancel = document.createElement("button");
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
-  btnCancel.addEventListener("click", cancel);
+  btnCancel.addEventListener("click", (e) => {
+    if (type === "grup-task" && Object.keys(editGrup).length !== 0) {
+      cancel(e, editGrup);
+    } else {
+      cancel(e);
+    }
+  });
 
   const continerConfirmBtns = document.createElement("div");
   continerConfirmBtns.classList.add("modal__confirm-btns");
@@ -227,7 +237,11 @@ function modal(type, editGrup = {}) {
   }
   container.appendChild(continerConfirm);
 
-  list.appendChild(container);
+  if (type === "grup-task" && Object.keys(editGrup).length !== 0) {
+    list.replaceChild(container, list.children[editGrup.containerTask]);
+  } else {
+    list.appendChild(container);
+  }
 }
 
 function toggleTask(e) {
@@ -243,9 +257,19 @@ function toggleTask(e) {
     : (ul.classList.remove("list--grup"), ul.classList.add("list--grup-off"));
 }
 
-function cancel(e) {
+function cancel(e, taks) {
   const modal = e.currentTarget.parentElement.parentElement.parentElement;
-  modal.remove();
+  if (taks !== undefined) {
+    let arrayTask = [];
+    Object.keys(taks).forEach((key) => {
+      if (key !== "title" && key !== "containerTask") {
+        arrayTask.push(taks[key]);
+      }
+    });
+    createGrup(taks.title, arrayTask, taks.containerTask);
+  } else {
+    modal.remove();
+  }
   containerBtnAddTask.style.display = "block";
 }
 function accept(e, type, containerTask) {
@@ -256,6 +280,7 @@ function accept(e, type, containerTask) {
     const containerInputs =
       e.currentTarget.parentElement.parentElement.previousElementSibling
         .previousElementSibling;
+
     Array.from(containerInputs.children).forEach((input, index) => {
       if (index < 1) {
         title = input.value;
@@ -290,14 +315,13 @@ function deleteTask(e) {
 }
 function editTask() {}
 function editGrup(container, title, tasks) {
-  const index = Array.from(list.children).indexOf(container);
+  const index = container;
   createGrup(title, tasks, index);
   // container.firstElementChild.firstElementChild.children[2].innerText = title;
   // Array.from(container.children[1].children).forEach((element, index) => {
   //   element.firstElementChild.children[1].innerText = tasks[index];
   // });
 }
-
 function showTasks() {}
 
 // para mañana
@@ -326,6 +350,7 @@ function showTasks() {}
 // investigar sobre peticiones http
 // repasar como trabajar con objetos , por ejemplo como iterarlos y como saber si estan vacio
 // investigar como trabajar con cookies y por que son importantes
+// crear apuntes de los metodos de objetos que uso
 
 // los imput tiene que poder tner saltos de linea y ser un poco mas largo (opcional)
 // hay que verificar que los inputs no esten vacios o si estan vacios que no creee nada
