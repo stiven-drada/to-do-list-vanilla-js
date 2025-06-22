@@ -4,10 +4,12 @@ const btnAddTask = document.getElementById("btn-create-task");
 const containerBtnAddTask = document.querySelector(".container-create-task");
 
 btnAddGrup.addEventListener("click", () => {
-  modal("grup-task");
+  modal("create-grup-task");
 });
 
-btnAddTask.addEventListener("click", modal);
+btnAddTask.addEventListener("click", () => {
+  modal("create-task");
+});
 
 function createGrup(title, tasks, position) {
   const checkbox = document.createElement("input");
@@ -24,32 +26,27 @@ function createGrup(title, tasks, position) {
   const btnEdit = document.createElement("button");
   btnEdit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
   btnEdit.addEventListener("click", (e) => {
-    const component = e.currentTarget.parentElement.parentElement.parentElement;
-
+    const component = e.currentTarget.closest(".list__item--grup");
+    const tasks = component.querySelectorAll("span");
     const grupTask = {};
-    const titleGrup =
-      e.currentTarget.parentElement.previousElementSibling.children[2]
-        .innerText;
-    grupTask["title"] = titleGrup;
-
-    const grup = e.currentTarget.parentElement.parentElement.nextElementSibling;
-
-    Array.from(grup.children).forEach((element, index) => {
-      let task = element.innerText;
-      grupTask[`task${index + 1}`] = task;
+    tasks.forEach((span, index) => {
+      if (index === 0) {
+        grupTask["title"] = span.innerText;
+      } else {
+        grupTask[`task${index}`] = span.innerText;
+      }
     });
 
     grupTask["containerTask"] = Array.from(list.children).indexOf(component);
     if (!document.querySelector(".modal")) {
-      modal("grup-task", grupTask);
+      modal("edit-grup-task", grupTask);
     }
   });
 
   const btnDelete = document.createElement("button");
   btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i>';
   btnDelete.addEventListener("click", (e) => {
-    const deleteGrup =
-      e.currentTarget.parentElement.parentElement.parentElement;
+    const deleteGrup = e.currentTarget.closest(".list__item--grup");
     deleteGrup.remove();
   });
 
@@ -101,12 +98,14 @@ function createTask(description, containerTask) {
   btnEdit.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
   btnEdit.addEventListener("click", (e) => {
     const task = {};
-    task["task1"] =
-      e.currentTarget.parentElement.previousElementSibling.lastElementChild.innerText;
+    task["task1"] = e.currentTarget
+      .closest(".list__item")
+      .querySelector("span").innerText;
+
     task["containerTask"] = Array.from(list.children).indexOf(
-      e.currentTarget.parentElement.parentElement
+      e.currentTarget.closest(".list__item")
     );
-    modal("task", task);
+    modal("edit-task", task);
   });
 
   const btnDelete = document.createElement("button");
@@ -116,8 +115,6 @@ function createTask(description, containerTask) {
   const divBtns = document.createElement("div");
   divBtns.classList.add("list__btns");
   if (typeof containerTask === "number" || containerTask === undefined) {
-    // la diferencia es que ahora vamos recibir por containerTask dos casos : un numero o un elmento
-    // editar esto aca
     divBtns.appendChild(btnEdit);
   }
 
@@ -126,16 +123,13 @@ function createTask(description, containerTask) {
   li.append(divInfo, divBtns);
 
   if (containerTask instanceof HTMLElement) {
-    // aca tambien hay  refactorisar y problemente agregar mas lineas de codigo todo proviene desde la linea 314
     containerTask.append(li);
   } else if (
     list.children[0] === undefined &&
     typeof containerTask === "number"
   ) {
-    // si uso el isertByfore
     list.appendChild(li);
   } else if (typeof containerTask === "number") {
-    // si uso el isertByfore
     list.replaceChild(li, list.children[containerTask]);
   } else {
     list.appendChild(li);
@@ -175,28 +169,28 @@ function modal(type, editGrup = {}) {
   const inputTitle = document.createElement("input");
   inputTitle.type = "text";
   inputTitle.placeholder = "Titulo";
-  inputTitle.required = true;
 
   const inputDescription = document.createElement("input");
   inputDescription.type = "text";
   inputDescription.placeholder = "Descripcion";
-  inputDescription.required = true;
 
   const containerInputs = document.createElement("article");
   containerInputs.classList.add("modal__inputs");
-  if (type === "grup-task") {
-    if (Object.keys(editGrup).length !== 0) {
+  if (type === "create-grup-task" || type === "edit-grup-task") {
+    if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       inputTitle.value = editGrup.title;
     }
-
     containerInputs.appendChild(inputTitle);
   }
-  if (Object.keys(editGrup).length !== 0) {
-    inputDescription.value = editGrup.task1 === undefined ? "" : editGrup.task1;
+  if (
+    (type === "edit-task" || type === "edit-grup-task") &&
+    editGrup.task1.length > 0
+  ) {
+    inputDescription.value = editGrup.task1;
   }
   containerInputs.appendChild(inputDescription);
 
-  if (type === "grup-task" && Object.keys(editGrup).length !== 0) {
+  if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
     const task = Object.keys(editGrup);
     if (task.length > 2) {
       for (let i = 2; i < task.length; i++) {
@@ -228,12 +222,12 @@ function modal(type, editGrup = {}) {
   btnConfirm.type = "button";
   btnConfirm.innerText = "Aceptar";
   btnConfirm.addEventListener("click", (e) => {
-    if (type === "grup-task") {
+    if (type === "create-grup-task" || type === "edit-grup-task") {
       accept(e, type, editGrup.containerTask);
-    } else if (type === "task") {
+    } else if (type === "edit-task") {
       accept(e, type, editGrup);
-    } else {
-      accept(e);
+    } else if (type === "create-task") {
+      accept(e, type);
     }
   });
 
@@ -241,9 +235,9 @@ function modal(type, editGrup = {}) {
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
   btnCancel.addEventListener("click", (e) => {
-    if (type === "grup-task" && Object.keys(editGrup).length !== 0) {
+    if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       cancel(e, type, editGrup);
-    } else if (type === "task" && Object.keys(editGrup).length !== 0) {
+    } else if (type === "edit-task" && Object.keys(editGrup).length !== 0) {
       cancel(e, type, editGrup);
     } else {
       cancel(e);
@@ -258,14 +252,15 @@ function modal(type, editGrup = {}) {
   continerConfirm.classList.add("modal__confirm");
   continerConfirm.appendChild(continerConfirmBtns);
   container.appendChild(containerInputs);
-  if (type === "grup-task") {
+  if (type === "create-grup-task" || type === "edit-grup-task") {
     container.appendChild(containerAddBtn);
   }
   container.appendChild(continerConfirm);
 
-  if (type === "grup-task" && Object.keys(editGrup).length !== 0) {
-    list.replaceChild(container, list.children[editGrup.containerTask]);
-  } else if (type === "task" && Object.keys(editGrup).length !== 0) {
+  if (
+    (type === "edit-task" || type === "edit-grup-task") &&
+    Object.keys(editGrup).length !== 0
+  ) {
     list.replaceChild(container, list.children[editGrup.containerTask]);
   } else {
     list.appendChild(container);
@@ -278,16 +273,18 @@ function toggleTask(e) {
   e.currentTarget.innerHTML = isOpen
     ? `<i class="fa-solid fa-caret-down"></i>`
     : '<i class="fa-solid fa-caret-right"></i>';
-  const ul = e.currentTarget.parentElement.parentElement.nextElementSibling;
+
+  const ul = e.currentTarget.closest(".list__item--grup").querySelector("ul");
 
   isOpen
-    ? (ul.classList.remove("list--grup-off"), ul.classList.add("list--grup"))
-    : (ul.classList.remove("list--grup"), ul.classList.add("list--grup-off"));
+    ? (ul.classList.remove("list--grup-off"), ul.classList.add("list--grup-on"))
+    : (ul.classList.remove("list--grup-on"),
+      ul.classList.add("list--grup-off"));
 }
 
 function cancel(e, type, taks) {
-  const modal = e.currentTarget.parentElement.parentElement.parentElement;
-  if (taks !== undefined && type === "grup-task") {
+  const modal = e.currentTarget.closest(".modal");
+  if (taks !== undefined && type === "edit-grup-task") {
     let arrayTask = [];
     Object.keys(taks).forEach((key) => {
       if (key !== "title" && key !== "containerTask") {
@@ -295,7 +292,7 @@ function cancel(e, type, taks) {
       }
     });
     createGrup(taks.title, arrayTask, taks.containerTask);
-  } else if (taks !== undefined && type === "task") {
+  } else if (taks !== undefined && type === "edit-task") {
     createTask(taks.task1, taks.containerTask);
   } else {
     modal.remove();
@@ -303,21 +300,17 @@ function cancel(e, type, taks) {
   containerBtnAddTask.style.display = "block";
 }
 function accept(e, type, containerTask) {
-  const modal = e.currentTarget.parentElement.parentElement.parentElement;
-  if (type === "grup-task") {
+  const modal = e.currentTarget.closest(".modal");
+  if (type === "create-grup-task" || type === "edit-grup-task") {
+    const modalInputs = modal.querySelectorAll("input");
     let title;
     const tasks = [];
-    const containerInputs =
-      e.currentTarget.parentElement.parentElement.previousElementSibling
-        .previousElementSibling;
 
-    Array.from(containerInputs.children).forEach((input, index) => {
+    modalInputs.forEach((input, index) => {
       if (index < 1) {
         title = input.value;
-      } else if (index === 1) {
-        tasks.push(input.value);
       } else {
-        tasks.push(input.children[0].value);
+        tasks.push(input.value);
       }
     });
     if (containerTask === undefined) {
@@ -325,17 +318,12 @@ function accept(e, type, containerTask) {
     } else {
       editGrup(containerTask, title, tasks);
     }
-  } else if (type === "task") {
-    const containerInputs =
-      e.currentTarget.parentElement.parentElement.previousElementSibling;
-    const description = containerInputs.firstElementChild.value;
+  } else if (type === "edit-task") {
+    const description = modal.querySelector("input").value;
     editTask(description, containerTask.containerTask);
-  } else {
-    const containerInputs =
-      e.currentTarget.parentElement.parentElement.previousElementSibling;
-    const description = containerInputs.firstElementChild.value;
-    createTask(description); // todo proviene esde aca pero esto solo va hacer usando para crearla ok
-    description.value = "";
+  } else if (type === "create-task") {
+    const description = modal.querySelector("input").value;
+    createTask(description);
   }
   modal.remove();
   containerBtnAddTask.style.display = "block";
@@ -345,7 +333,7 @@ function deleteInput(e) {
   deleteInput.remove();
 }
 function deleteTask(e) {
-  const deleteTask = e.currentTarget.parentElement.parentElement;
+  const deleteTask = e.currentTarget.closest(".list__item");
   deleteTask.remove();
 }
 function editTask(descirption, position) {
@@ -354,10 +342,6 @@ function editTask(descirption, position) {
 function editGrup(container, title, tasks) {
   const index = container;
   createGrup(title, tasks, index);
-  // container.firstElementChild.firstElementChild.children[2].innerText = title;
-  // Array.from(container.children[1].children).forEach((element, index) => {
-  //   element.firstElementChild.children[1].innerText = tasks[index];
-  // });
 }
 function showTasks() {}
 

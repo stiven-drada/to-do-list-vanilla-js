@@ -80,9 +80,8 @@ header {
 
 /* grupo de tareas */
 
-.list--grup {
+.list--grup-on {
   padding: 5px 0;
-
   display: flex;
   flex-direction: column;
   gap: 5px;
