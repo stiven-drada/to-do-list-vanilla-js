@@ -40,6 +40,7 @@ function createGrup(title, tasks, position) {
     grupTask["containerTask"] = Array.from(list.children).indexOf(component);
     if (!document.querySelector(".modal")) {
       modal("edit-grup-task", grupTask);
+      setAcceptButtonEnabled(false);
     }
   });
 
@@ -105,7 +106,10 @@ function createTask(description, containerTask) {
     task["containerTask"] = Array.from(list.children).indexOf(
       e.currentTarget.closest(".list__item")
     );
-    modal("edit-task", task);
+    if (!document.querySelector(".modal")) {
+      modal("edit-task", task);
+      setAcceptButtonEnabled(false);
+    }
   });
 
   const btnDelete = document.createElement("button");
@@ -169,10 +173,32 @@ function modal(type, editGrup = {}) {
   const inputTitle = document.createElement("input");
   inputTitle.type = "text";
   inputTitle.placeholder = "Titulo";
+  inputTitle.addEventListener("input", () => {
+    if (inputDescription.value !== "" && inputTitle.value !== "") {
+      setAcceptButtonEnabled(false);
+    } else {
+      setAcceptButtonEnabled(true);
+    }
+  });
 
   const inputDescription = document.createElement("input");
   inputDescription.type = "text";
   inputDescription.placeholder = "Descripcion";
+  inputDescription.addEventListener("input", () => {
+    if (type === "create-task" || type === "edit-task") {
+      if (inputDescription.value === "") {
+        setAcceptButtonEnabled(true);
+      } else {
+        setAcceptButtonEnabled(false);
+      }
+    } else {
+      if (inputDescription.value !== "" && inputTitle.value !== "") {
+        setAcceptButtonEnabled(false);
+      } else {
+        setAcceptButtonEnabled(true);
+      }
+    }
+  });
 
   const containerInputs = document.createElement("article");
   containerInputs.classList.add("modal__inputs");
@@ -220,7 +246,21 @@ function modal(type, editGrup = {}) {
 
   const btnConfirm = document.createElement("button");
   btnConfirm.type = "button";
-  btnConfirm.innerText = "Aceptar";
+  switch (type) {
+    case "create-grup-task":
+      btnConfirm.innerText = "crear grupo";
+      break;
+    case "create-task":
+      btnConfirm.innerText = "crear tarea";
+      break;
+    case "edit-grup-task":
+    case "edit-task":
+      btnConfirm.innerText = "guardar cambios";
+      break;
+  }
+  btnConfirm.id = "btn-accept";
+  btnConfirm.classList.add("modal__btn-confirm-disabled");
+  btnConfirm.disabled = true;
   btnConfirm.addEventListener("click", (e) => {
     if (type === "create-grup-task" || type === "edit-grup-task") {
       accept(e, type, editGrup.containerTask);
@@ -310,10 +350,12 @@ function accept(e, type, containerTask) {
       if (index < 1) {
         title = input.value;
       } else {
-        tasks.push(input.value);
+        if (input.value !== "") {
+          tasks.push(input.value);
+        }
       }
     });
-    if (containerTask === undefined) {
+    if (type === "create-grup-task") {
       createGrup(title, tasks);
     } else {
       editGrup(containerTask, title, tasks);
@@ -345,6 +387,24 @@ function editGrup(container, title, tasks) {
 }
 function showTasks() {}
 
+function setAcceptButtonEnabled(enabled) {
+  const btn = document.querySelector(".modal #btn-accept");
+
+  if (enabled) {
+    btn.disabled = true;
+    btn.classList.replace(
+      "modal__btn-confirm-enabled",
+      "modal__btn-confirm-disabled"
+    );
+  } else {
+    btn.disabled = false;
+    btn.classList.replace(
+      "modal__btn-confirm-disabled",
+      "modal__btn-confirm-enabled"
+    );
+  }
+}
+
 // para mañana
 // crear modal para cada tipo de tarea ✅
 //  terminar las funciones
@@ -373,6 +433,7 @@ function showTasks() {}
 // investigar como trabajar con cookies y por que son importantes
 // crear apuntes de los metodos de objetos que uso
 // repasar como eso de que todo en js es un objeto
+//  como desarrollar software con cursor (IA)
 
 // los imput tiene que poder tner saltos de linea y ser un poco mas largo (opcional)
 // hay que verificar que los inputs no esten vacios o si estan vacios que no creee nada

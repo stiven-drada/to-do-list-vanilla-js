@@ -1,0 +1,37 @@
+1 . modal de confirmación :
+cuando halla texto en el modal de crear tarea si presiona cancelar debo mostrar un aviso
+ de si realmente quiere descartar lo que hizo   o cancelar la acción
+
+2.tareas sin texto:(en desarrollo)
+si la tarea no tiene texto no se le habilita el botón aceptar que es el encargado de crear la tarea 
+pero este comportamiento es distinto para una tarea o un grupo de tareas , 
+por que el grupo de tareas necesita mínimo  un tituló  y una tarea ,
+mientras que la tarea sencilla solo necesita una descripción
+creacion y edicion se deverian comportar de la misma forma ? 
+que pasa si se edita una un grupo de tareas y  se borratodo , deverimos mostrar una tarea vacia o simpleme  seria como no crear nada
+ok entonces en todos los casos que el input este vacio no se crea la tarea 
+a esepecion de si es editado deverimos mostrar un modal de confirmacion : donde se dice que la tarea sera eliminada.
+
+grupo de tareas : no deveria poder crear tareas vacias
+
+3.guardar el texto de la tarea con su respectivo  estado (incompleta o completada)(requiere base de datos o localStorege)
+
+4. el editar de las tareas sencillas  (listo)
+
+5. usted cree que los botones de crear tareas deban verse debajo de las tareas creadas 
+o le damos otro lugar donde no tenga que bajar para crear la tarea
+
+
+6 . si tengo mas de una tarea y precio en editar en esa tarea se abre un modal para ese tarea abriendo mas de 1 ves el modal 
+esto deria funcionar asi ?
+
+7. alternar el modal si lo llaman desde editar de otra tarea
+
+8. poder ordenar las  tareas ( arrastrar)
+
+9. hacer click en el modal cuando se crea una teare sencila deveria hacer focus en el input
+10. diferencias con colores (opcional se creativo) los grupo de las tareas sencillas
+
+
+
+continuar con la logica de los inputs vacios del grupo de tareas

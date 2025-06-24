@@ -170,5 +170,13 @@ header {
   gap: 40px;
 }
 
+.modal__btn-confirm-disabled:hover {
+  cursor: not-allowed;
+}
+
+.modal__btn-confirm-enabled:hover {
+  cursor: pointer;
+}
+
 /* repasar */
 /* seduco clases y seudo elementos */
