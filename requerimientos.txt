@@ -32,6 +32,10 @@ esto deria funcionar asi ?
 9. hacer click en el modal cuando se crea una teare sencila deveria hacer focus en el input
 10. diferencias con colores (opcional se creativo) los grupo de las tareas sencillas
 
+11. crear una papelera de resiclaje ?
 
+continuar con la logica de los inputs vacios del grupo de tareas  implementado 
 
-continuar con la logica de los inputs vacios del grupo de tareas
+continuar con el modal de confimarcion para el boton eliminar
+
+podemos seguir con alternar el modal entre cuando precionen el boton editar

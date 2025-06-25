@@ -2,6 +2,7 @@ const list = document.getElementById("list");
 const btnAddGrup = document.getElementById("btn-create-grup-tasks");
 const btnAddTask = document.getElementById("btn-create-task");
 const containerBtnAddTask = document.querySelector(".container-create-task");
+const main = document.querySelector(".container-main");
 
 btnAddGrup.addEventListener("click", () => {
   modal("create-grup-task");
@@ -48,7 +49,7 @@ function createGrup(title, tasks, position) {
   btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i>';
   btnDelete.addEventListener("click", (e) => {
     const deleteGrup = e.currentTarget.closest(".list__item--grup");
-    deleteGrup.remove();
+    deleteConfirmationDialog(deleteGrup, "Grupo");
   });
 
   const divInfo = document.createElement("div");
@@ -114,7 +115,10 @@ function createTask(description, containerTask) {
 
   const btnDelete = document.createElement("button");
   btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i>';
-  btnDelete.addEventListener("click", deleteTask);
+  btnDelete.addEventListener("click", (e) => {
+    const deleteTask = e.currentTarget.closest(".list__item");
+    deleteConfirmationDialog(deleteTask, "Tarea");
+  });
 
   const divBtns = document.createElement("div");
   divBtns.classList.add("list__btns");
@@ -210,7 +214,7 @@ function modal(type, editGrup = {}) {
   }
   if (
     (type === "edit-task" || type === "edit-grup-task") &&
-    editGrup.task1.length > 0
+    editGrup.task1?.length > 0
   ) {
     inputDescription.value = editGrup.task1;
   }
@@ -374,9 +378,8 @@ function deleteInput(e) {
   const deleteInput = e.currentTarget.parentElement;
   deleteInput.remove();
 }
-function deleteTask(e) {
-  const deleteTask = e.currentTarget.closest(".list__item");
-  deleteTask.remove();
+function deleteTask(task) {
+  task.remove();
 }
 function editTask(descirption, position) {
   createTask(descirption, position);
@@ -403,6 +406,38 @@ function setAcceptButtonEnabled(enabled) {
       "modal__btn-confirm-enabled"
     );
   }
+}
+
+function deleteConfirmationDialog(task, type) {
+  const config = {
+    Tarea: "la",
+    Grupo: "el",
+  };
+
+  const confirmationModal = `<section class="confirmationModal" id="confirmationModal" >
+    <p class="confirmationModal__message">${config[type]} ${type} se eliminará permanentemente</p>
+    <div class="confirmationModal__btns">
+      <button class="confirmationModal__cancel">cancelar</button>
+      <button class="confirmationModal__accept">aceptar</button>
+    </div>
+  </section>`;
+  main.insertAdjacentHTML("beforeend", confirmationModal);
+
+  const modal = main.querySelector("#confirmationModal");
+  const cancelBtn = modal.querySelector(".confirmationModal__cancel");
+  const acceptBtn = modal.querySelector(".confirmationModal__accept");
+
+  cancelBtn.addEventListener("click", () => {
+    removeConfirmationModal();
+  });
+
+  acceptBtn.addEventListener("click", () => {
+    deleteTask(task);
+    removeConfirmationModal();
+  });
+}
+function removeConfirmationModal() {
+  main.querySelector("#confirmationModal")?.remove();
 }
 
 // para mañana
