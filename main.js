@@ -3,6 +3,7 @@ const btnAddGrup = document.getElementById("btn-create-grup-tasks");
 const btnAddTask = document.getElementById("btn-create-task");
 const containerBtnAddTask = document.querySelector(".container-create-task");
 const main = document.querySelector(".container-main");
+let auxiliar;
 
 btnAddGrup.addEventListener("click", () => {
   modal("create-grup-task");
@@ -40,8 +41,16 @@ function createGrup(title, tasks, position) {
 
     grupTask["containerTask"] = Array.from(list.children).indexOf(component);
     if (!document.querySelector(".modal")) {
+      auxiliar = grupTask;
       modal("edit-grup-task", grupTask);
-      setAcceptButtonEnabled(false);
+    } else if (document.querySelector(".modal")) {
+      if (auxiliar.title?.length) {
+        cancel("edit-grup-task", auxiliar);
+      } else {
+        cancel("edit-task", auxiliar);
+      }
+      auxiliar = grupTask;
+      modal("edit-grup-task", grupTask);
     }
   });
 
@@ -107,9 +116,19 @@ function createTask(description, containerTask) {
     task["containerTask"] = Array.from(list.children).indexOf(
       e.currentTarget.closest(".list__item")
     );
+
     if (!document.querySelector(".modal")) {
+      auxiliar = task;
       modal("edit-task", task);
-      setAcceptButtonEnabled(false);
+    } else if (document.querySelector(".modal")) {
+      if (auxiliar.title?.length) {
+        cancel("edit-grup-task", auxiliar);
+      } else {
+        cancel("edit-task", auxiliar);
+      }
+
+      auxiliar = task;
+      modal("edit-task", task);
     }
   });
 
@@ -264,7 +283,12 @@ function modal(type, editGrup = {}) {
   }
   btnConfirm.id = "btn-accept";
   btnConfirm.classList.add("modal__btn-confirm-disabled");
-  btnConfirm.disabled = true;
+  if (Object.keys(editGrup).length !== 0) {
+    btnConfirm.disabled = false;
+  } else {
+    btnConfirm.disabled = true;
+  }
+
   btnConfirm.addEventListener("click", (e) => {
     if (type === "create-grup-task" || type === "edit-grup-task") {
       accept(e, type, editGrup.containerTask);
@@ -280,11 +304,11 @@ function modal(type, editGrup = {}) {
   btnCancel.innerText = "Cancelar";
   btnCancel.addEventListener("click", (e) => {
     if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
-      cancel(e, type, editGrup);
+      cancel(type, editGrup);
     } else if (type === "edit-task" && Object.keys(editGrup).length !== 0) {
-      cancel(e, type, editGrup);
+      cancel(type, editGrup);
     } else {
-      cancel(e);
+      cancel();
     }
   });
 
@@ -326,8 +350,8 @@ function toggleTask(e) {
       ul.classList.add("list--grup-off"));
 }
 
-function cancel(e, type, taks) {
-  const modal = e.currentTarget.closest(".modal");
+function cancel(type, taks) {
+  const modal = document.querySelector(".modal");
   if (taks !== undefined && type === "edit-grup-task") {
     let arrayTask = [];
     Object.keys(taks).forEach((key) => {
