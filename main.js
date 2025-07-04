@@ -85,7 +85,9 @@ function createGrup(title, tasks, position) {
   container.append(divMain, containerTask);
 
   if (position !== undefined) {
-    list.replaceChild(container, list.children[position]);
+    const modal = document.querySelector(".modal");
+    const indexModal = Array.from(list.children).indexOf(modal);
+    list.replaceChild(container, list.children[indexModal]);
   } else {
     list.appendChild(container);
   }
@@ -157,7 +159,9 @@ function createTask(description, containerTask) {
   ) {
     list.appendChild(li);
   } else if (typeof containerTask === "number") {
-    list.replaceChild(li, list.children[containerTask]);
+    const modal = document.querySelector(".modal");
+    const indexModal = Array.from(list.children).indexOf(modal);
+    list.replaceChild(li, list.children[indexModal]);
   } else {
     list.appendChild(li);
   }
