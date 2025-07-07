@@ -13,7 +13,7 @@ btnAddTask.addEventListener("click", () => {
   modal("create-task");
 });
 
-function createGrup(title, tasks, position) {
+function createGroup(title, tasks, position) {
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
 
@@ -296,8 +296,16 @@ function modal(type, editGrup = {}) {
   btnConfirm.classList.add("modal__btn-confirm-disabled");
   if (Object.keys(editGrup).length !== 0) {
     btnConfirm.disabled = false;
+    btnConfirm.classList.replace(
+      "modal__btn-confirm-disabled",
+      "modal__btn-confirm-enabled"
+    );
   } else {
     btnConfirm.disabled = true;
+    btnConfirm.classList.replace(
+      "modal__btn-confirm-enabled",
+      "modal__btn-confirm-disabled"
+    );
   }
 
   btnConfirm.addEventListener("click", (e) => {
@@ -370,7 +378,7 @@ function cancel(type, taks) {
         arrayTask.push(taks[key]);
       }
     });
-    createGrup(taks.title, arrayTask, taks.containerTask);
+    createGroup(taks.title, arrayTask, taks.containerTask);
   } else if (taks !== undefined && type === "edit-task") {
     createTask(taks.task1, taks.containerTask);
   } else {
@@ -395,7 +403,7 @@ function accept(e, type, containerTask) {
       }
     });
     if (type === "create-grup-task") {
-      createGrup(title, tasks);
+      createGroup(title, tasks);
     } else {
       editGrup(containerTask, title, tasks);
     }
@@ -421,7 +429,7 @@ function editTask(descirption, position) {
 }
 function editGrup(container, title, tasks) {
   const index = container;
-  createGrup(title, tasks, index);
+  createGroup(title, tasks, index);
 }
 function showTasks() {}
 

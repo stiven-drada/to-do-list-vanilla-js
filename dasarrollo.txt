@@ -1,0 +1,6 @@
+9. hacer click en el modal cuando se crea una teare sencila deveria hacer focus en el input 
+cuando editamos tambien deve suceder lo mimo 
+en tarea sencilla deve tener focus en descripcion
+y en grupos de tareas deve apareser en title
+
+3. cuado editamos algo el boton muestra un icono en el cursor que no deve ser (corregir)
