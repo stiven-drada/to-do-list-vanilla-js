@@ -276,13 +276,20 @@ function modal(type, editGrup = {}) {
   switch (type) {
     case "create-grup-task":
       btnConfirm.innerText = "crear grupo";
+      focusInput(inputTitle);
       break;
     case "create-task":
       btnConfirm.innerText = "crear tarea";
+      focusInput(inputDescription);
       break;
     case "edit-grup-task":
     case "edit-task":
       btnConfirm.innerText = "guardar cambios";
+      if (type === "edit-task") {
+        focusInput(inputDescription);
+      } else {
+        focusInput(inputTitle);
+      }
       break;
   }
   btnConfirm.id = "btn-accept";
@@ -466,6 +473,12 @@ function deleteConfirmationDialog(task, type) {
 }
 function removeConfirmationModal() {
   main.querySelector("#confirmationModal")?.remove();
+}
+
+function focusInput(input) {
+  setTimeout(() => {
+    input.focus();
+  }, 0);
 }
 
 // para mañana

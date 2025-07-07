@@ -1,14 +1,13 @@
 3.guardar el texto de la tarea con su respectivo  estado (incompleta o completada)(requiere base de datos o localStorege)
 
 
-
 5. usted cree que los botones de crear tareas deban verse debajo de las tareas creadas  (opcional)
 o le damos otro lugar donde no tenga que bajar para crear la tarea
 
 
 8. poder ordenar las  tareas ( arrastrar opcional)
 
-9. hacer click en el modal cuando se crea una teare sencila deveria hacer focus en el input
+9.hacer que acepta cancelar funcione con las teclas enter y escape
 
 
 11. crear una papelera de resiclaje ? (opcional. muy interesante)
@@ -48,7 +47,7 @@ puede dejar eliminar y editar al mismo tiempo o cambiar  restarle el indice
 cuando precione en editar pregunto cuantos hijos tiene el contenedor padre si es menor
 hacemos algo pero tambien depende de la posicion inicial del elemto editado
 
-posibles casos : si elemento editado es menor al eliminado  no se hace nada por que el bug no afecta
+posibles casos : si elemento editado es menor al eli3minado  no se hace nada por que el bug no afecta
 cuando el elemento eliminado es menor  al objeto en edicion devemos cambiar el metodo de iserccion
 
 como medoy cuenta de estos cabios : mirar si la cantidad de hijo cambio y si elemento eliminado es menor al editado
