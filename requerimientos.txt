@@ -1,28 +1,15 @@
 3.guardar el texto de la tarea con su respectivo  estado (incompleta o completada)(requiere base de datos o localStorege)
 
-
-5. usted cree que los botones de crear tareas deban verse debajo de las tareas creadas  (opcional)
-o le damos otro lugar donde no tenga que bajar para crear la tarea
-
-
-8. poder ordenar las  tareas ( arrastrar opcional)
+* refactorizar el parametro type de la fucnion deleteConfirmationDialog por otro mas descriptivo
 
 9.hacer que acepta cancelar funcione con las teclas enter y escape
 
 
-11. crear una papelera de resiclaje ? (opcional. muy interesante)
-
-
 2.cuando se complete la tarea deve suceder algo (un efecto o estilo )
-
-3. cuado editamos algo el boton muestra un icono en el cursor que no deve ser (corregir)
 
 4. trabajar la parte responsiva
 
-5. hay un bug: si elimino una tarea mientras este editando  párese ser que el orden de los elementos cambia
 
-6.el modal de confimar para elimanar tarea, crea bug (el boton borrar deja de funcionar)  
-cuando se llama mas de una ves y no haver confirmado una desicion
 
 
 trabajando en : bug punto 5. solucionado
@@ -56,3 +43,13 @@ los dos botones del modal de buguean
 
 si position existe , neceisto saber la posicion del modal  y si los hijos del
 elemento padre desminullesllen cambiamos el indice por el actual del modal
+
+
+--------------------opcional----------------------------------------------
+
+5. usted cree que los botones de crear tareas deban verse debajo de las tareas creadas  (opcional)
+o le damos otro lugar donde no tenga que bajar para crear la tarea
+
+8. poder ordenar las  tareas ( arrastrar opcional)
+
+11. crear una papelera de resiclaje ? (opcional. muy interesante)

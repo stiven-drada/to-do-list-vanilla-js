@@ -1,6 +1,15 @@
+5. hay un bug: si elimino una tarea mientras este editando  párese ser que el orden de los elementos cambia
+---------------------------------------------------------------------------------------
 9. hacer click en el modal cuando se crea una teare sencila deveria hacer focus en el input 
 cuando editamos tambien deve suceder lo mimo 
 en tarea sencilla deve tener focus en descripcion
 y en grupos de tareas deve apareser en title
 
-3. cuado editamos algo el boton muestra un icono en el cursor que no deve ser (corregir)
+3. cuado editamos algo el boton muestra un icono en el cursor que no deve ser (corregir)\
+07/07/2025
+------------------------------------------------------------------------------------------
+08/07/2025
+6.El modal de confirmación para eliminar una tarea genera un bug: el botón "Borrar" 
+deja de funcionar cuando el modal se abre más de una vez sin haber confirmado ninguna decisión
+
+9.hacer que acepta cancelar funcione con las teclas enter y escape

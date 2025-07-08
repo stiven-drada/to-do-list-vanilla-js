@@ -167,7 +167,7 @@ function createTask(description, containerTask) {
   }
 }
 
-function modal(type, editGrup = {}) {
+function modal(modalMode, editGrup = {}) {
   function addInput(text) {
     const adderContainer = document.createElement("div");
     adderContainer.classList.add("modal__adder-container");
@@ -212,7 +212,7 @@ function modal(type, editGrup = {}) {
   inputDescription.type = "text";
   inputDescription.placeholder = "Descripcion";
   inputDescription.addEventListener("input", () => {
-    if (type === "create-task" || type === "edit-task") {
+    if (modalMode === "create-task" || modalMode === "edit-task") {
       if (inputDescription.value === "") {
         setAcceptButtonEnabled(true);
       } else {
@@ -229,21 +229,21 @@ function modal(type, editGrup = {}) {
 
   const containerInputs = document.createElement("article");
   containerInputs.classList.add("modal__inputs");
-  if (type === "create-grup-task" || type === "edit-grup-task") {
-    if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
+  if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
+    if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       inputTitle.value = editGrup.title;
     }
     containerInputs.appendChild(inputTitle);
   }
   if (
-    (type === "edit-task" || type === "edit-grup-task") &&
+    (modalMode === "edit-task" || modalMode === "edit-grup-task") &&
     editGrup.task1?.length > 0
   ) {
     inputDescription.value = editGrup.task1;
   }
   containerInputs.appendChild(inputDescription);
 
-  if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
+  if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
     const task = Object.keys(editGrup);
     if (task.length > 2) {
       for (let i = 2; i < task.length; i++) {
@@ -273,7 +273,7 @@ function modal(type, editGrup = {}) {
 
   const btnConfirm = document.createElement("button");
   btnConfirm.type = "button";
-  switch (type) {
+  switch (modalMode) {
     case "create-grup-task":
       btnConfirm.innerText = "crear grupo";
       focusInput(inputTitle);
@@ -285,7 +285,7 @@ function modal(type, editGrup = {}) {
     case "edit-grup-task":
     case "edit-task":
       btnConfirm.innerText = "guardar cambios";
-      if (type === "edit-task") {
+      if (modalMode === "edit-task") {
         focusInput(inputDescription);
       } else {
         focusInput(inputTitle);
@@ -309,12 +309,18 @@ function modal(type, editGrup = {}) {
   }
 
   btnConfirm.addEventListener("click", (e) => {
-    if (type === "create-grup-task" || type === "edit-grup-task") {
-      accept(e, type, editGrup.containerTask);
-    } else if (type === "edit-task") {
-      accept(e, type, editGrup);
-    } else if (type === "create-task") {
-      accept(e, type);
+    if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
+      accept(e, modalMode, editGrup.containerTask);
+    } else if (modalMode === "edit-task") {
+      accept(e, modalMode, editGrup);
+    } else if (modalMode === "create-task") {
+      accept(e, modalMode);
+    }
+  });
+
+  btnConfirm.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      console.log(e.key);
     }
   });
 
@@ -322,10 +328,13 @@ function modal(type, editGrup = {}) {
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
   btnCancel.addEventListener("click", (e) => {
-    if (type === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
-      cancel(type, editGrup);
-    } else if (type === "edit-task" && Object.keys(editGrup).length !== 0) {
-      cancel(type, editGrup);
+    if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
+      cancel(modalMode, editGrup);
+    } else if (
+      modalMode === "edit-task" &&
+      Object.keys(editGrup).length !== 0
+    ) {
+      cancel(modalMode, editGrup);
     } else {
       cancel();
     }
@@ -339,13 +348,13 @@ function modal(type, editGrup = {}) {
   continerConfirm.classList.add("modal__confirm");
   continerConfirm.appendChild(continerConfirmBtns);
   container.appendChild(containerInputs);
-  if (type === "create-grup-task" || type === "edit-grup-task") {
+  if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
     container.appendChild(containerAddBtn);
   }
   container.appendChild(continerConfirm);
 
   if (
-    (type === "edit-task" || type === "edit-grup-task") &&
+    (modalMode === "edit-task" || modalMode === "edit-grup-task") &&
     Object.keys(editGrup).length !== 0
   ) {
     list.replaceChild(container, list.children[editGrup.containerTask]);
@@ -369,9 +378,9 @@ function toggleTask(e) {
       ul.classList.add("list--grup-off"));
 }
 
-function cancel(type, taks) {
+function cancel(modalMode, taks) {
   const modal = document.querySelector(".modal");
-  if (taks !== undefined && type === "edit-grup-task") {
+  if (taks !== undefined && modalMode === "edit-grup-task") {
     let arrayTask = [];
     Object.keys(taks).forEach((key) => {
       if (key !== "title" && key !== "containerTask") {
@@ -379,16 +388,16 @@ function cancel(type, taks) {
       }
     });
     createGroup(taks.title, arrayTask, taks.containerTask);
-  } else if (taks !== undefined && type === "edit-task") {
+  } else if (taks !== undefined && modalMode === "edit-task") {
     createTask(taks.task1, taks.containerTask);
   } else {
     modal.remove();
   }
   containerBtnAddTask.style.display = "block";
 }
-function accept(e, type, containerTask) {
+function accept(e, modalMode, containerTask) {
   const modal = e.currentTarget.closest(".modal");
-  if (type === "create-grup-task" || type === "edit-grup-task") {
+  if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
     const modalInputs = modal.querySelectorAll("input");
     let title;
     const tasks = [];
@@ -402,15 +411,15 @@ function accept(e, type, containerTask) {
         }
       }
     });
-    if (type === "create-grup-task") {
+    if (modalMode === "create-grup-task") {
       createGroup(title, tasks);
     } else {
       editGrup(containerTask, title, tasks);
     }
-  } else if (type === "edit-task") {
+  } else if (modalMode === "edit-task") {
     const description = modal.querySelector("input").value;
     editTask(description, containerTask.containerTask);
-  } else if (type === "create-task") {
+  } else if (modalMode === "create-task") {
     const description = modal.querySelector("input").value;
     createTask(description);
   }
