@@ -122,6 +122,7 @@ function createTask(description, containerTask) {
     if (!document.querySelector(".modal")) {
       auxiliar = task;
       modal("edit-task", task);
+      document.querySelector(".modal").classList.add("open");
     } else if (document.querySelector(".modal")) {
       if (auxiliar.title?.length) {
         cancel("edit-grup-task", auxiliar);
@@ -131,6 +132,7 @@ function createTask(description, containerTask) {
 
       auxiliar = task;
       modal("edit-task", task);
+      document.querySelector(".modal").classList.add("open");
     }
   });
 
@@ -308,26 +310,20 @@ function modal(modalMode, editGrup = {}) {
     );
   }
 
-  btnConfirm.addEventListener("click", (e) => {
+  btnConfirm.addEventListener("click", () => {
     if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-      accept(e, modalMode, editGrup.containerTask);
+      accept(modalMode, editGrup.containerTask);
     } else if (modalMode === "edit-task") {
-      accept(e, modalMode, editGrup);
+      accept(modalMode, editGrup);
     } else if (modalMode === "create-task") {
-      accept(e, modalMode);
-    }
-  });
-
-  btnConfirm.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      console.log(e.key);
+      accept(modalMode);
     }
   });
 
   const btnCancel = document.createElement("button");
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
-  btnCancel.addEventListener("click", (e) => {
+  btnCancel.addEventListener("click", () => {
     if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       cancel(modalMode, editGrup);
     } else if (
@@ -395,8 +391,8 @@ function cancel(modalMode, taks) {
   }
   containerBtnAddTask.style.display = "block";
 }
-function accept(e, modalMode, containerTask) {
-  const modal = e.currentTarget.closest(".modal");
+function accept(modalMode, containerTask) {
+  const modal = document.querySelector(".modal");
   if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
     const modalInputs = modal.querySelectorAll("input");
     let title;
@@ -461,6 +457,7 @@ function setAcceptButtonEnabled(enabled) {
 }
 
 function deleteConfirmationDialog(task, type) {
+  if (document.querySelector("#confirmationModal")) return;
   const config = {
     Tarea: "la",
     Grupo: "el",
