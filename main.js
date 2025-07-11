@@ -4,6 +4,7 @@ const btnAddTask = document.getElementById("btn-create-task");
 const containerBtnAddTask = document.querySelector(".container-create-task");
 const main = document.querySelector(".container-main");
 let auxiliar;
+let handleKeyTaskForModal;
 
 btnAddGrup.addEventListener("click", () => {
   modal("create-grup-task");
@@ -170,6 +171,10 @@ function createTask(description, containerTask) {
 }
 
 function modal(modalMode, editGrup = {}) {
+  if (handleKeyTaskForModal) {
+    document.removeEventListener("keydown", handleKeyTaskForModal);
+    handleKeyTaskForModal = null;
+  }
   function addInput(text) {
     const adderContainer = document.createElement("div");
     adderContainer.classList.add("modal__adder-container");
@@ -311,6 +316,10 @@ function modal(modalMode, editGrup = {}) {
   }
 
   btnConfirm.addEventListener("click", () => {
+    if (handleKeyTaskForModal) {
+      document.removeEventListener("keydown", handleKeyTaskForModal);
+      handleKeyTaskForModal = null;
+    }
     if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
       accept(modalMode, editGrup.containerTask);
     } else if (modalMode === "edit-task") {
@@ -356,6 +365,52 @@ function modal(modalMode, editGrup = {}) {
     list.replaceChild(container, list.children[editGrup.containerTask]);
   } else {
     list.appendChild(container);
+  }
+
+  handleKeyTaskForModal = createHadleKeytask(modalMode, editGrup);
+
+  document.addEventListener("keydown", handleKeyTaskForModal);
+}
+
+function createHadleKeytask(modalMode, editGrup) {
+  return function (event) {
+    switch (modalMode) {
+      case "create-task":
+        handleKeyTask(event, modalMode);
+        break;
+      case "edit-task":
+      case "create-grup-task":
+      case "edit-grup-task":
+        handleKeyTask(event, modalMode, editGrup);
+        break;
+    }
+  };
+}
+
+function handleKeyTask(event, modalMode, editGrup) {
+  const modal = document.querySelector(".modal");
+
+  if (modal === null) return;
+
+  const isModalConfirmButtonEnabled = modal
+    .querySelector("#btn-accept")
+    .classList.contains("modal__btn-confirm-enabled");
+
+  if (event.key === "Enter" && isModalConfirmButtonEnabled) {
+    switch (modalMode) {
+      case "create-task":
+        accept(modalMode);
+        break;
+      case "edit-task":
+        accept(modalMode, editGrup);
+        break;
+      case "create-grup-task":
+      case "edit-grup-task":
+        accept(modalMode, editGrup.containerTask);
+        break;
+    }
+    document.removeEventListener("keydown", handleKeyTaskForModal);
+    handleKeyTaskForModal = null;
   }
 }
 
@@ -429,8 +484,8 @@ function deleteInput(e) {
 function deleteTask(task) {
   task.remove();
 }
-function editTask(descirption, position) {
-  createTask(descirption, position);
+function editTask(description, position) {
+  createTask(description, position);
 }
 function editGrup(container, title, tasks) {
   const index = container;
