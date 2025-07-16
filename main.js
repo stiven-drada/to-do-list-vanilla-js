@@ -175,31 +175,7 @@ function modal(modalMode, editGrup = {}) {
     document.removeEventListener("keydown", modalKeyListener);
     modalKeyListener = null;
   }
-  function addInput(text) {
-    const adderContainer = document.createElement("div");
-    adderContainer.classList.add("modal__adder-container");
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.classList.add("modal__adder-input");
-    input.placeholder = "Descripcion";
-    input.size = 100;
-    input.required = true;
-    if (text) {
-      input.value = text;
-    }
-
-    const deleteAdderBtn = document.createElement("button");
-    deleteAdderBtn.type = "button";
-    deleteAdderBtn.title = "eliminar tarea";
-    deleteAdderBtn.classList.add("modal__adder-btn");
-    deleteAdderBtn.innerText = "X";
-    deleteAdderBtn.addEventListener("click", deleteInput);
-
-    adderContainer.append(input, deleteAdderBtn);
-
-    containerInputs.appendChild(adderContainer);
-  }
   containerBtnAddTask.style.display = "none";
   const container = document.createElement("section");
   container.classList.add("modal");
@@ -266,6 +242,7 @@ function modal(modalMode, editGrup = {}) {
   const btnAdd = document.createElement("button");
   btnAdd.classList.add("modal__add-btn");
   btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i>';
+  btnAdd.title = "Añadir tarea (Ctrl + Enter)";
   btnAdd.addEventListener("click", () => {
     addInput();
   });
@@ -301,6 +278,7 @@ function modal(modalMode, editGrup = {}) {
   }
   btnConfirm.id = "btn-accept";
   btnConfirm.classList.add("modal__btn-confirm-disabled");
+  btnConfirm.title = "Confirmar (Enter)";
   if (Object.keys(editGrup).length !== 0) {
     btnConfirm.disabled = false;
     btnConfirm.classList.replace(
@@ -316,10 +294,6 @@ function modal(modalMode, editGrup = {}) {
   }
 
   btnConfirm.addEventListener("click", () => {
-    if (modalKeyListener) {
-      document.removeEventListener("keydown", modalKeyListener);
-      modalKeyListener = null;
-    }
     if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
       accept(modalMode, editGrup.containerTask);
     } else if (modalMode === "edit-task") {
@@ -332,13 +306,9 @@ function modal(modalMode, editGrup = {}) {
   const btnCancel = document.createElement("button");
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
+  btnCancel.title = "Cancelar (Escape)";
 
   btnCancel.addEventListener("click", () => {
-    if (modalKeyListener) {
-      document.removeEventListener("keydown", modalKeyListener);
-      modalKeyListener = null;
-    }
-
     if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       cancel(modalMode, editGrup);
     } else if (
@@ -402,7 +372,22 @@ function handleModalKeydown(event, modalMode, editGrup) {
     .querySelector("#btn-accept")
     .classList.contains("modal__btn-confirm-enabled");
 
-  if (event.key === "Enter" && isModalConfirmButtonEnabled) {
+  if (
+    modalMode.endsWith("grup-task") &&
+    event.ctrlKey &&
+    event.key === "Enter"
+  ) {
+    addInput();
+  } else if (event.key === "Escape") {
+    if (
+      (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
+      Object.keys(editGrup).length !== 0
+    ) {
+      cancel(modalMode, editGrup);
+    } else {
+      cancel();
+    }
+  } else if (event.key === "Enter" && isModalConfirmButtonEnabled) {
     switch (modalMode) {
       case "create-task":
         accept(modalMode);
@@ -415,22 +400,6 @@ function handleModalKeydown(event, modalMode, editGrup) {
         accept(modalMode, editGrup.containerTask);
         break;
     }
-  } else if (event.key === "Escape") {
-    if (
-      (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
-      Object.keys(editGrup).length !== 0
-    ) {
-      cancel(modalMode, editGrup);
-    } else {
-      cancel();
-    }
-  }
-  switch (event.key) {
-    case "Enter":
-    case "Escape":
-      document.removeEventListener("keydown", modalKeyListener);
-      modalKeyListener = null;
-      break;
   }
 }
 
@@ -464,6 +433,10 @@ function cancel(modalMode, taks) {
   } else {
     modal.remove();
   }
+  if (modalKeyListener) {
+    document.removeEventListener("keydown", modalKeyListener);
+    modalKeyListener = null;
+  }
   containerBtnAddTask.style.display = "block";
 }
 function accept(modalMode, containerTask) {
@@ -495,6 +468,10 @@ function accept(modalMode, containerTask) {
     createTask(description);
   }
   modal.remove();
+  if (modalKeyListener) {
+    document.removeEventListener("keydown", modalKeyListener);
+    modalKeyListener = null;
+  }
   containerBtnAddTask.style.display = "block";
 }
 function deleteInput(e) {
@@ -570,6 +547,33 @@ function focusInput(input) {
   }, 0);
 }
 
+function addInput(text) {
+  const adderContainer = document.createElement("div");
+  adderContainer.classList.add("modal__adder-container");
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.classList.add("modal__adder-input");
+  input.placeholder = "Descripcion";
+  input.size = 100;
+  if (text) {
+    input.value = text;
+  }
+
+  const deleteAdderBtn = document.createElement("button");
+  deleteAdderBtn.type = "button";
+  deleteAdderBtn.title = "eliminar tarea";
+  deleteAdderBtn.classList.add("modal__adder-btn");
+  deleteAdderBtn.innerText = "X";
+  deleteAdderBtn.addEventListener("click", deleteInput);
+
+  adderContainer.append(input, deleteAdderBtn);
+  const containerInputs = document
+    .querySelector(".modal")
+    .querySelector(".modal__inputs");
+
+  containerInputs.appendChild(adderContainer);
+}
 // para mañana
 // crear modal para cada tipo de tarea ✅
 //  terminar las funciones
