@@ -4,6 +4,15 @@
 
 9.hacer que acepta cancelar funcione con las teclas enter y escape
 
+* cuando se precione el boton eliminar deve subrallar la tarea que se va eliminar haciendo la mas notorias 
+*cambiar inputs por textatarea para que se vea mejor
+* bug nuevo encontrado : tiene que haber una tarea creada , la editas y precionas cancelar (con la teclo con conclik da igual)
+luego preciona en  crear tarea y sin escribir nada preciona en editar y cancelar , se hara un duplicado de la tarea
+
+* poder borrar una cantidad X de tareas previamente selecionadas
+* cada ves que cree una que complete una tarea la app deve notificar con un sonido
+* crear una area de tareas completadas (cuando confirmen que ya la termino se elimina del tabler actual y se pasa al tablero de  tareas completas)
+
 
 2.cuando se complete la tarea deve suceder algo (un efecto o estilo )
 

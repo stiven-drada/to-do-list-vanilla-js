@@ -4,7 +4,7 @@ const btnAddTask = document.getElementById("btn-create-task");
 const containerBtnAddTask = document.querySelector(".container-create-task");
 const main = document.querySelector(".container-main");
 let auxiliar;
-let handleKeyTaskForModal;
+let modalKeyListener;
 
 btnAddGrup.addEventListener("click", () => {
   modal("create-grup-task");
@@ -171,9 +171,9 @@ function createTask(description, containerTask) {
 }
 
 function modal(modalMode, editGrup = {}) {
-  if (handleKeyTaskForModal) {
-    document.removeEventListener("keydown", handleKeyTaskForModal);
-    handleKeyTaskForModal = null;
+  if (modalKeyListener) {
+    document.removeEventListener("keydown", modalKeyListener);
+    modalKeyListener = null;
   }
   function addInput(text) {
     const adderContainer = document.createElement("div");
@@ -316,9 +316,9 @@ function modal(modalMode, editGrup = {}) {
   }
 
   btnConfirm.addEventListener("click", () => {
-    if (handleKeyTaskForModal) {
-      document.removeEventListener("keydown", handleKeyTaskForModal);
-      handleKeyTaskForModal = null;
+    if (modalKeyListener) {
+      document.removeEventListener("keydown", modalKeyListener);
+      modalKeyListener = null;
     }
     if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
       accept(modalMode, editGrup.containerTask);
@@ -332,7 +332,13 @@ function modal(modalMode, editGrup = {}) {
   const btnCancel = document.createElement("button");
   btnCancel.type = "button";
   btnCancel.innerText = "Cancelar";
+
   btnCancel.addEventListener("click", () => {
+    if (modalKeyListener) {
+      document.removeEventListener("keydown", modalKeyListener);
+      modalKeyListener = null;
+    }
+
     if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
       cancel(modalMode, editGrup);
     } else if (
@@ -367,27 +373,27 @@ function modal(modalMode, editGrup = {}) {
     list.appendChild(container);
   }
 
-  handleKeyTaskForModal = createHadleKeytask(modalMode, editGrup);
+  modalKeyListener = createModalKeyListener(modalMode, editGrup);
 
-  document.addEventListener("keydown", handleKeyTaskForModal);
+  document.addEventListener("keydown", modalKeyListener);
 }
 
-function createHadleKeytask(modalMode, editGrup) {
+function createModalKeyListener(modalMode, editGrup) {
   return function (event) {
     switch (modalMode) {
       case "create-task":
-        handleKeyTask(event, modalMode);
+        handleModalKeydown(event, modalMode);
         break;
       case "edit-task":
       case "create-grup-task":
       case "edit-grup-task":
-        handleKeyTask(event, modalMode, editGrup);
+        handleModalKeydown(event, modalMode, editGrup);
         break;
     }
   };
 }
 
-function handleKeyTask(event, modalMode, editGrup) {
+function handleModalKeydown(event, modalMode, editGrup) {
   const modal = document.querySelector(".modal");
 
   if (modal === null) return;
@@ -409,8 +415,22 @@ function handleKeyTask(event, modalMode, editGrup) {
         accept(modalMode, editGrup.containerTask);
         break;
     }
-    document.removeEventListener("keydown", handleKeyTaskForModal);
-    handleKeyTaskForModal = null;
+  } else if (event.key === "Escape") {
+    if (
+      (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
+      Object.keys(editGrup).length !== 0
+    ) {
+      cancel(modalMode, editGrup);
+    } else {
+      cancel();
+    }
+  }
+  switch (event.key) {
+    case "Enter":
+    case "Escape":
+      document.removeEventListener("keydown", modalKeyListener);
+      modalKeyListener = null;
+      break;
   }
 }
 

@@ -10,15 +10,12 @@ y en grupos de tareas deve apareser en title
 07/07/2025 todo solucionado
 ------------------------------------------------------------------------------------------
 08/07/2025 pendiente
-6.El modal de confirmación para eliminar una tarea genera un bug: el botón "Borrar"  (solucionado)
+*.El modal de confirmación para eliminar una tarea genera un bug: el botón "Borrar"  (solucionado)
 deja de funcionar cuando el modal se abre más de una vez sin haber confirmado ninguna decisión
 
-9.hacer que acepta cancelar funcione con las teclas enter y escape
+*.hacer que acepta cancelar funcione con las teclas enter y escape (falta el escape)
+*el modal tambien puede puede agregar tarea en modo grupo entonces dale una tecla a esa funcion
 
-el error ocurre cuando se preciona el boton editar  en una tarea o grupo , no espesifico la accion (cancelar o aceptar)
-y presiono de nuevo el bonton editar sobre otra tarea
-
-El error ocurre cuando se presiona el botón "Editar" en una tarea o grupo,
- pero no se especifica una acción posterior (como "Cancelar" o "Aceptar"), 
-y si luego se presiona nuevamente el botón "Editar" en otra tarea la tarea se covierte en grupo o viseversa ,
-ademas pueden perder su posicion 
+inicio:08/07/2025
+fin:11/07/2025
+-----------------------------------------------------------------------------------------------
