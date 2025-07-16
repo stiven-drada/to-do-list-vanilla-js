@@ -1,5 +1,0 @@
-idea avansada para la app de to do list
-
-la app podria crear tareas para dias espesificos de la semana
-planeas una lista de tareas para una semana entera con la fecha espesifica
-tambien podria implementar una lista para todo un mes con fechas y horas exactas
