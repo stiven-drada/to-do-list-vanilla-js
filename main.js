@@ -111,6 +111,12 @@ function createTask(description, containerTask) {
   const btnEdit = document.createElement("button");
   btnEdit.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
   btnEdit.addEventListener("click", (e) => {
+    if (
+      document.querySelector(".modal") &&
+      document.querySelector(".modal").classList.contains("modal--create")
+    ) {
+      return;
+    }
     const task = {};
     task["task1"] = e.currentTarget
       .closest(".list__item")
@@ -178,7 +184,8 @@ function modal(modalMode, editGrup = {}) {
 
   containerBtnAddTask.style.display = "none";
   const container = document.createElement("section");
-  container.classList.add("modal");
+  let mode = modalMode.startsWith("create") ? "modal--create" : "modal--edit";
+  container.classList.add("modal", mode);
 
   const inputTitle = document.createElement("input");
   inputTitle.type = "text";
