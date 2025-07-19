@@ -29,6 +29,12 @@ function createGroup(title, tasks, position) {
   const btnEdit = document.createElement("button");
   btnEdit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
   btnEdit.addEventListener("click", (e) => {
+    if (
+      document.querySelector(".modal") &&
+      document.querySelector(".modal").classList.contains("modal--create")
+    ) {
+      return;
+    }
     const component = e.currentTarget.closest(".list__item--grup");
     const tasks = component.querySelectorAll("span");
     const grupTask = {};
