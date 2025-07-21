@@ -521,7 +521,7 @@ function setAcceptButtonEnabled(enabled) {
   }
 }
 
-function deleteConfirmationDialog(task, type) {
+function deleteConfirmationDialog(task, itemType) {
   if (document.querySelector("#confirmationModal")) return;
   const config = {
     Tarea: "la",
@@ -529,7 +529,7 @@ function deleteConfirmationDialog(task, type) {
   };
 
   const confirmationModal = `<section class="confirmationModal" id="confirmationModal" >
-    <p class="confirmationModal__message">${config[type]} ${type} se eliminará permanentemente</p>
+    <p class="confirmationModal__message">${config[itemType]} ${itemType} se eliminará permanentemente</p>
     <div class="confirmationModal__btns">
       <button class="confirmationModal__cancel">cancelar</button>
       <button class="confirmationModal__accept">aceptar</button>
