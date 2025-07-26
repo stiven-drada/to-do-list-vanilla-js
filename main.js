@@ -24,6 +24,7 @@ function createGroup(title, tasks, position) {
   btnToggleTask.addEventListener("click", toggleTask);
 
   const span = document.createElement("span");
+  span.classList.add("task-title");
   span.innerText = title;
 
   const btnEdit = document.createElement("button");
@@ -108,6 +109,7 @@ function createTask(description, containerTask) {
   checkbox.type = "checkbox";
 
   const span = document.createElement("span");
+  span.classList.add("task-description");
   span.innerText = description;
 
   const divInfo = document.createElement("div");
@@ -246,7 +248,7 @@ function modal(modalMode, editGrup = {}) {
         let key = task[i];
         let text = editGrup[key];
         if (key !== "containerTask") {
-          addInput(text);
+          addInput(text, containerInputs);
         }
       }
     }
@@ -560,7 +562,7 @@ function focusInput(input) {
   }, 0);
 }
 
-function addInput(text) {
+function addInput(text, container) {
   const adderContainer = document.createElement("div");
   adderContainer.classList.add("modal__adder-container");
 
@@ -568,7 +570,6 @@ function addInput(text) {
   input.type = "text";
   input.classList.add("modal__adder-input");
   input.placeholder = "Descripcion";
-  input.size = 100;
   if (text) {
     input.value = text;
   }
@@ -579,11 +580,15 @@ function addInput(text) {
   deleteAdderBtn.classList.add("modal__adder-btn");
   deleteAdderBtn.innerText = "X";
   deleteAdderBtn.addEventListener("click", deleteInput);
-
+  let containerInputs;
   adderContainer.append(input, deleteAdderBtn);
-  const containerInputs = document
-    .querySelector(".modal")
-    .querySelector(".modal__inputs");
+  if (container !== undefined) {
+    containerInputs = container;
+  } else {
+    containerInputs = document
+      .querySelector(".modal")
+      .querySelector(".modal__inputs");
+  }
 
   containerInputs.appendChild(adderContainer);
 }
