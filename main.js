@@ -20,6 +20,7 @@ function createGroup(title, tasks, position) {
 
   const btnToggleTask = document.createElement("button");
   btnToggleTask.id = "btnToggleTask";
+  btnToggleTask.title = "Abrir";
   btnToggleTask.innerHTML = '<i class="fa-solid fa-caret-right"></i>';
   btnToggleTask.addEventListener("click", toggleTask);
 
@@ -28,6 +29,7 @@ function createGroup(title, tasks, position) {
   span.innerText = title;
 
   const btnEdit = document.createElement("button");
+  btnEdit.title = "Editar grupo";
   btnEdit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
   btnEdit.addEventListener("click", (e) => {
     if (
@@ -63,6 +65,7 @@ function createGroup(title, tasks, position) {
   });
 
   const btnDelete = document.createElement("button");
+  btnDelete.title = "Eliminar grupo";
   btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i>';
   btnDelete.addEventListener("click", (e) => {
     const deleteGrup = e.currentTarget.closest(".list__item--grup");
@@ -117,6 +120,7 @@ function createTask(description, containerTask) {
   divInfo.append(checkbox, span);
 
   const btnEdit = document.createElement("button");
+  btnEdit.title = "Editar tarea";
   btnEdit.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
   btnEdit.addEventListener("click", (e) => {
     if (
@@ -152,6 +156,7 @@ function createTask(description, containerTask) {
   });
 
   const btnDelete = document.createElement("button");
+  btnDelete.title = "Eliminar tarea";
   btnDelete.innerHTML = '<i class="fa-solid fa-trash"></i>';
   btnDelete.addEventListener("click", (e) => {
     const deleteTask = e.currentTarget.closest(".list__item");
@@ -425,17 +430,19 @@ function handleModalKeydown(event, modalMode, editGrup) {
 
 function toggleTask(e) {
   const isOpen = e.currentTarget.classList.toggle("open");
-
-  e.currentTarget.innerHTML = isOpen
-    ? `<i class="fa-solid fa-caret-down"></i>`
-    : '<i class="fa-solid fa-caret-right"></i>';
-
   const ul = e.currentTarget.closest(".list__item--grup").querySelector("ul");
 
-  isOpen
-    ? (ul.classList.remove("list--grup-off"), ul.classList.add("list--grup-on"))
-    : (ul.classList.remove("list--grup-on"),
-      ul.classList.add("list--grup-off"));
+  if (isOpen) {
+    e.currentTarget.innerHTML = `<i class="fa-solid fa-caret-down"></i>`;
+    e.currentTarget.title = "Cerrar";
+    ul.classList.remove("list--grup-off");
+    ul.classList.add("list--grup-on");
+  } else {
+    e.currentTarget.innerHTML = '<i class="fa-solid fa-caret-right"></i>';
+    e.currentTarget.title = "Abrir";
+    ul.classList.remove("list--grup-on");
+    ul.classList.add("list--grup-off");
+  }
 }
 
 function cancel(modalMode, taks) {
