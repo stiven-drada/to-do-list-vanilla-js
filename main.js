@@ -206,8 +206,9 @@ function modal(modalMode, editGrup = {}) {
     }
   });
 
-  const inputDescription = document.createElement("input");
-  inputDescription.type = "text";
+  const inputDescription = document.createElement("textarea");
+  inputDescription.rows = 3;
+  inputDescription.style.resize = "none";
   inputDescription.placeholder = "Descripcion";
   inputDescription.addEventListener("input", () => {
     if (modalMode === "create-task" || modalMode === "edit-task") {
@@ -293,7 +294,7 @@ function modal(modalMode, editGrup = {}) {
   }
   btnConfirm.id = "btn-accept";
   btnConfirm.classList.add("modal__btn-confirm-disabled");
-  btnConfirm.title = "Confirmar (Enter)";
+  btnConfirm.title = "Confirmar (Shift + Enter)";
   if (Object.keys(editGrup).length !== 0) {
     btnConfirm.disabled = false;
     btnConfirm.classList.replace(
@@ -402,7 +403,11 @@ function handleModalKeydown(event, modalMode, editGrup) {
     } else {
       cancel();
     }
-  } else if (event.key === "Enter" && isModalConfirmButtonEnabled) {
+  } else if (
+    event.shiftKey &&
+    event.key === "Enter" &&
+    isModalConfirmButtonEnabled
+  ) {
     switch (modalMode) {
       case "create-task":
         accept(modalMode);
@@ -457,7 +462,7 @@ function cancel(modalMode, taks) {
 function accept(modalMode, containerTask) {
   const modal = document.querySelector(".modal");
   if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-    const modalInputs = modal.querySelectorAll("input");
+    const modalInputs = modal.querySelectorAll("input,textarea");
     let title;
     const tasks = [];
 
@@ -476,10 +481,10 @@ function accept(modalMode, containerTask) {
       editGrup(containerTask, title, tasks);
     }
   } else if (modalMode === "edit-task") {
-    const description = modal.querySelector("input").value;
+    const description = modal.querySelector("textarea").value;
     editTask(description, containerTask.containerTask);
   } else if (modalMode === "create-task") {
-    const description = modal.querySelector("input").value;
+    const description = modal.querySelector("textarea").value;
     createTask(description);
   }
   modal.remove();
@@ -566,9 +571,10 @@ function addInput(text, container) {
   const adderContainer = document.createElement("div");
   adderContainer.classList.add("modal__adder-container");
 
-  const input = document.createElement("input");
-  input.type = "text";
+  const input = document.createElement("textarea");
+  input.style.resize = "none";
   input.classList.add("modal__adder-input");
+  input.rows = 3;
   input.placeholder = "Descripcion";
   if (text) {
     input.value = text;
