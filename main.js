@@ -196,9 +196,10 @@ function modal(modalMode, editGrup = {}) {
   }
 
   containerBtnAddTask.style.display = "none";
-  const container = document.createElement("section");
+
+  const modalContainer = document.createElement("section");
   let mode = modalMode.startsWith("create") ? "modal--create" : "modal--edit";
-  container.classList.add("modal", mode);
+  modalContainer.classList.add("modal", mode);
 
   const inputTitle = document.createElement("input");
   inputTitle.type = "text";
@@ -349,19 +350,19 @@ function modal(modalMode, editGrup = {}) {
   const continerConfirm = document.createElement("article");
   continerConfirm.classList.add("modal__confirm");
   continerConfirm.appendChild(continerConfirmBtns);
-  container.appendChild(containerInputs);
+  modalContainer.appendChild(containerInputs);
   if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-    container.appendChild(containerAddBtn);
+    modalContainer.appendChild(containerAddBtn);
   }
-  container.appendChild(continerConfirm);
+  modalContainer.appendChild(continerConfirm);
 
   if (
     (modalMode === "edit-task" || modalMode === "edit-grup-task") &&
     Object.keys(editGrup).length !== 0
   ) {
-    list.replaceChild(container, list.children[editGrup.containerTask]);
+    list.replaceChild(modalContainer, list.children[editGrup.containerTask]);
   } else {
-    list.appendChild(container);
+    list.appendChild(modalContainer);
   }
 
   modalKeyListener = createModalKeyListener(modalMode, editGrup);
