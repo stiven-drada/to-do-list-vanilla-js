@@ -189,7 +189,7 @@ function createTask(description, containerTask) {
   }
 }
 
-function modal(modalMode, editGrup = {}) {
+function modal(modalMode, itemToEdit = {}) {
   if (modalKeyListener) {
     document.removeEventListener("keydown", modalKeyListener);
     modalKeyListener = null;
@@ -235,25 +235,28 @@ function modal(modalMode, editGrup = {}) {
   const containerInputs = document.createElement("article");
   containerInputs.classList.add("modal__inputs");
   if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-    if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
-      inputTitle.value = editGrup.title;
+    if (
+      modalMode === "edit-grup-task" &&
+      Object.keys(itemToEdit).length !== 0
+    ) {
+      inputTitle.value = itemToEdit.title;
     }
     containerInputs.appendChild(inputTitle);
   }
   if (
     (modalMode === "edit-task" || modalMode === "edit-grup-task") &&
-    editGrup.task1?.length > 0
+    itemToEdit.task1?.length > 0
   ) {
-    inputDescription.value = editGrup.task1;
+    inputDescription.value = itemToEdit.task1;
   }
   containerInputs.appendChild(inputDescription);
 
-  if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
-    const task = Object.keys(editGrup);
+  if (modalMode === "edit-grup-task" && Object.keys(itemToEdit).length !== 0) {
+    const task = Object.keys(itemToEdit);
     if (task.length > 2) {
       for (let i = 2; i < task.length; i++) {
         let key = task[i];
-        let text = editGrup[key];
+        let text = itemToEdit[key];
         if (key !== "containerTask") {
           addInput(text, containerInputs);
         }
@@ -301,7 +304,7 @@ function modal(modalMode, editGrup = {}) {
   btnConfirm.id = "btn-accept";
   btnConfirm.classList.add("modal__btn-confirm-disabled");
   btnConfirm.title = "Confirmar (Shift + Enter)";
-  if (Object.keys(editGrup).length !== 0) {
+  if (Object.keys(itemToEdit).length !== 0) {
     btnConfirm.disabled = false;
     btnConfirm.classList.replace(
       "modal__btn-confirm-disabled",
@@ -317,9 +320,9 @@ function modal(modalMode, editGrup = {}) {
 
   btnConfirm.addEventListener("click", () => {
     if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-      accept(modalMode, editGrup.containerTask);
+      accept(modalMode, itemToEdit.containerTask);
     } else if (modalMode === "edit-task") {
-      accept(modalMode, editGrup);
+      accept(modalMode, itemToEdit);
     } else if (modalMode === "create-task") {
       accept(modalMode);
     }
@@ -331,13 +334,16 @@ function modal(modalMode, editGrup = {}) {
   btnCancel.title = "Cancelar (Escape)";
 
   btnCancel.addEventListener("click", () => {
-    if (modalMode === "edit-grup-task" && Object.keys(editGrup).length !== 0) {
-      cancel(modalMode, editGrup);
+    if (
+      modalMode === "edit-grup-task" &&
+      Object.keys(itemToEdit).length !== 0
+    ) {
+      cancel(modalMode, itemToEdit);
     } else if (
       modalMode === "edit-task" &&
-      Object.keys(editGrup).length !== 0
+      Object.keys(itemToEdit).length !== 0
     ) {
-      cancel(modalMode, editGrup);
+      cancel(modalMode, itemToEdit);
     } else {
       cancel();
     }
@@ -358,14 +364,14 @@ function modal(modalMode, editGrup = {}) {
 
   if (
     (modalMode === "edit-task" || modalMode === "edit-grup-task") &&
-    Object.keys(editGrup).length !== 0
+    Object.keys(itemToEdit).length !== 0
   ) {
-    list.replaceChild(modalContainer, list.children[editGrup.containerTask]);
+    list.replaceChild(modalContainer, list.children[itemToEdit.containerTask]);
   } else {
     list.appendChild(modalContainer);
   }
 
-  modalKeyListener = createModalKeyListener(modalMode, editGrup);
+  modalKeyListener = createModalKeyListener(modalMode, itemToEdit);
 
   document.addEventListener("keydown", modalKeyListener);
 }
