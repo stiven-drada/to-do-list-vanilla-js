@@ -376,7 +376,7 @@ function modal(modalMode, itemToEdit = {}) {
   document.addEventListener("keydown", modalKeyListener);
 }
 
-function createModalKeyListener(modalMode, editGrup) {
+function createModalKeyListener(modalMode, itemToEdit) {
   return function (event) {
     switch (modalMode) {
       case "create-task":
@@ -385,13 +385,13 @@ function createModalKeyListener(modalMode, editGrup) {
       case "edit-task":
       case "create-grup-task":
       case "edit-grup-task":
-        handleModalKeydown(event, modalMode, editGrup);
+        handleModalKeydown(event, modalMode, itemToEdit);
         break;
     }
   };
 }
 
-function handleModalKeydown(event, modalMode, editGrup) {
+function handleModalKeydown(event, modalMode, itemToEdit) {
   const modal = document.querySelector(".modal");
 
   if (modal === null) return;
@@ -409,9 +409,9 @@ function handleModalKeydown(event, modalMode, editGrup) {
   } else if (event.key === "Escape") {
     if (
       (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
-      Object.keys(editGrup).length !== 0
+      Object.keys(itemToEdit).length !== 0
     ) {
-      cancel(modalMode, editGrup);
+      cancel(modalMode, itemToEdit);
     } else {
       cancel();
     }
@@ -425,11 +425,11 @@ function handleModalKeydown(event, modalMode, editGrup) {
         accept(modalMode);
         break;
       case "edit-task":
-        accept(modalMode, editGrup);
+        accept(modalMode, itemToEdit);
         break;
       case "create-grup-task":
       case "edit-grup-task":
-        accept(modalMode, editGrup.containerTask);
+        accept(modalMode, itemToEdit.containerTask);
         break;
     }
   }
