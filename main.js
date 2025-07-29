@@ -197,6 +197,178 @@ function modal(modalMode, itemToEdit = {}) {
 
   containerBtnAddTask.style.display = "none";
 
+  function cancel(modalMode, taks) {
+    if (taks !== undefined && modalMode === "edit-grup-task") {
+      let arrayTask = [];
+      Object.keys(taks).forEach((key) => {
+        if (key !== "title" && key !== "containerTask") {
+          arrayTask.push(taks[key]);
+        }
+      });
+      createGroup(taks.title, arrayTask, taks.containerTask);
+    } else if (taks !== undefined && modalMode === "edit-task") {
+      createTask(taks.task1, taks.containerTask);
+    } else {
+      modalContainer.remove();
+    }
+    if (modalKeyListener) {
+      document.removeEventListener("keydown", modalKeyListener);
+      modalKeyListener = null;
+    }
+    containerBtnAddTask.style.display = "block";
+  }
+
+  function accept(modalMode, containerTask) {
+    if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
+      const modalInputs = modalContainer.querySelectorAll("input,textarea");
+      let title;
+      const tasks = [];
+
+      modalInputs.forEach((input, index) => {
+        if (index < 1) {
+          title = input.value;
+        } else {
+          if (input.value !== "") {
+            tasks.push(input.value);
+          }
+        }
+      });
+      if (modalMode === "create-grup-task") {
+        createGroup(title, tasks);
+      } else {
+        editGrup(containerTask, title, tasks);
+      }
+    } else if (modalMode === "edit-task") {
+      const description = modalContainer.querySelector("textarea").value;
+      editTask(description, containerTask.containerTask);
+    } else if (modalMode === "create-task") {
+      const description = modalContainer.querySelector("textarea").value;
+      createTask(description);
+    }
+    modalContainer.remove();
+    if (modalKeyListener) {
+      document.removeEventListener("keydown", modalKeyListener);
+      modalKeyListener = null;
+    }
+    containerBtnAddTask.style.display = "block";
+  }
+
+  function addInput(text, container) {
+    const adderContainer = document.createElement("div");
+    adderContainer.classList.add("modal__adder-container");
+
+    const input = document.createElement("textarea");
+    input.style.resize = "none";
+    input.classList.add("modal__adder-input");
+    input.rows = 3;
+    input.placeholder = "Descripcion";
+    if (text) {
+      input.value = text;
+    }
+
+    const deleteAdderBtn = document.createElement("button");
+    deleteAdderBtn.type = "button";
+    deleteAdderBtn.title = "eliminar tarea";
+    deleteAdderBtn.classList.add("modal__adder-btn");
+    deleteAdderBtn.innerText = "X";
+    deleteAdderBtn.addEventListener("click", deleteInput);
+    let containerInputs;
+    adderContainer.append(input, deleteAdderBtn);
+    if (container !== undefined) {
+      containerInputs = container;
+    } else {
+      containerInputs = modalContainer.querySelector(".modal__inputs");
+    }
+
+    containerInputs.appendChild(adderContainer);
+  }
+
+  function deleteInput(e) {
+    const deleteInput = e.currentTarget.parentElement;
+    deleteInput.remove();
+  }
+
+  function setAcceptButtonEnabled(enabled) {
+    if (enabled) {
+      btnConfirm.disabled = true;
+      btnConfirm.classList.replace(
+        "modal__btn-confirm-enabled",
+        "modal__btn-confirm-disabled"
+      );
+    } else {
+      btnConfirm.disabled = false;
+      btnConfirm.classList.replace(
+        "modal__btn-confirm-disabled",
+        "modal__btn-confirm-enabled"
+      );
+    }
+  }
+
+  function focusInput(input) {
+    setTimeout(() => {
+      input.focus();
+    }, 0);
+  }
+
+  function createModalKeyListener(modalMode, itemToEdit) {
+    return function (event) {
+      switch (modalMode) {
+        case "create-task":
+          handleModalKeydown(event, modalMode);
+          break;
+        case "edit-task":
+        case "create-grup-task":
+        case "edit-grup-task":
+          handleModalKeydown(event, modalMode, itemToEdit);
+          break;
+      }
+    };
+  }
+
+  function handleModalKeydown(event, modalMode, itemToEdit) {
+    const modal = document.querySelector(".modal");
+
+    if (modal === null) return;
+
+    const isModalConfirmButtonEnabled = modal
+      .querySelector("#btn-accept")
+      .classList.contains("modal__btn-confirm-enabled");
+
+    if (
+      modalMode.endsWith("grup-task") &&
+      event.ctrlKey &&
+      event.key === "Enter"
+    ) {
+      addInput();
+    } else if (event.key === "Escape") {
+      if (
+        (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
+        Object.keys(itemToEdit).length !== 0
+      ) {
+        cancel(modalMode, itemToEdit);
+      } else {
+        cancel();
+      }
+    } else if (
+      event.shiftKey &&
+      event.key === "Enter" &&
+      isModalConfirmButtonEnabled
+    ) {
+      switch (modalMode) {
+        case "create-task":
+          accept(modalMode);
+          break;
+        case "edit-task":
+          accept(modalMode, itemToEdit);
+          break;
+        case "create-grup-task":
+        case "edit-grup-task":
+          accept(modalMode, itemToEdit.containerTask);
+          break;
+      }
+    }
+  }
+
   const modalContainer = document.createElement("section");
   let mode = modalMode.startsWith("create") ? "modal--create" : "modal--edit";
   modalContainer.classList.add("modal", mode);
@@ -376,65 +548,6 @@ function modal(modalMode, itemToEdit = {}) {
   document.addEventListener("keydown", modalKeyListener);
 }
 
-function createModalKeyListener(modalMode, itemToEdit) {
-  return function (event) {
-    switch (modalMode) {
-      case "create-task":
-        handleModalKeydown(event, modalMode);
-        break;
-      case "edit-task":
-      case "create-grup-task":
-      case "edit-grup-task":
-        handleModalKeydown(event, modalMode, itemToEdit);
-        break;
-    }
-  };
-}
-
-function handleModalKeydown(event, modalMode, itemToEdit) {
-  const modal = document.querySelector(".modal");
-
-  if (modal === null) return;
-
-  const isModalConfirmButtonEnabled = modal
-    .querySelector("#btn-accept")
-    .classList.contains("modal__btn-confirm-enabled");
-
-  if (
-    modalMode.endsWith("grup-task") &&
-    event.ctrlKey &&
-    event.key === "Enter"
-  ) {
-    addInput();
-  } else if (event.key === "Escape") {
-    if (
-      (modalMode === "edit-grup-task" || modalMode === "edit-task") &&
-      Object.keys(itemToEdit).length !== 0
-    ) {
-      cancel(modalMode, itemToEdit);
-    } else {
-      cancel();
-    }
-  } else if (
-    event.shiftKey &&
-    event.key === "Enter" &&
-    isModalConfirmButtonEnabled
-  ) {
-    switch (modalMode) {
-      case "create-task":
-        accept(modalMode);
-        break;
-      case "edit-task":
-        accept(modalMode, itemToEdit);
-        break;
-      case "create-grup-task":
-      case "edit-grup-task":
-        accept(modalMode, itemToEdit.containerTask);
-        break;
-    }
-  }
-}
-
 function toggleTask(e) {
   const isOpen = e.currentTarget.classList.toggle("open");
   const ul = e.currentTarget.closest(".list__item--grup").querySelector("ul");
@@ -452,66 +565,6 @@ function toggleTask(e) {
   }
 }
 
-function cancel(modalMode, taks) {
-  const modal = document.querySelector(".modal");
-  if (taks !== undefined && modalMode === "edit-grup-task") {
-    let arrayTask = [];
-    Object.keys(taks).forEach((key) => {
-      if (key !== "title" && key !== "containerTask") {
-        arrayTask.push(taks[key]);
-      }
-    });
-    createGroup(taks.title, arrayTask, taks.containerTask);
-  } else if (taks !== undefined && modalMode === "edit-task") {
-    createTask(taks.task1, taks.containerTask);
-  } else {
-    modal.remove();
-  }
-  if (modalKeyListener) {
-    document.removeEventListener("keydown", modalKeyListener);
-    modalKeyListener = null;
-  }
-  containerBtnAddTask.style.display = "block";
-}
-function accept(modalMode, containerTask) {
-  const modal = document.querySelector(".modal");
-  if (modalMode === "create-grup-task" || modalMode === "edit-grup-task") {
-    const modalInputs = modal.querySelectorAll("input,textarea");
-    let title;
-    const tasks = [];
-
-    modalInputs.forEach((input, index) => {
-      if (index < 1) {
-        title = input.value;
-      } else {
-        if (input.value !== "") {
-          tasks.push(input.value);
-        }
-      }
-    });
-    if (modalMode === "create-grup-task") {
-      createGroup(title, tasks);
-    } else {
-      editGrup(containerTask, title, tasks);
-    }
-  } else if (modalMode === "edit-task") {
-    const description = modal.querySelector("textarea").value;
-    editTask(description, containerTask.containerTask);
-  } else if (modalMode === "create-task") {
-    const description = modal.querySelector("textarea").value;
-    createTask(description);
-  }
-  modal.remove();
-  if (modalKeyListener) {
-    document.removeEventListener("keydown", modalKeyListener);
-    modalKeyListener = null;
-  }
-  containerBtnAddTask.style.display = "block";
-}
-function deleteInput(e) {
-  const deleteInput = e.currentTarget.parentElement;
-  deleteInput.remove();
-}
 function deleteTask(task) {
   task.remove();
 }
@@ -521,25 +574,6 @@ function editTask(description, position) {
 function editGrup(container, title, tasks) {
   const index = container;
   createGroup(title, tasks, index);
-}
-function showTasks() {}
-
-function setAcceptButtonEnabled(enabled) {
-  const btn = document.querySelector(".modal #btn-accept");
-
-  if (enabled) {
-    btn.disabled = true;
-    btn.classList.replace(
-      "modal__btn-confirm-enabled",
-      "modal__btn-confirm-disabled"
-    );
-  } else {
-    btn.disabled = false;
-    btn.classList.replace(
-      "modal__btn-confirm-disabled",
-      "modal__btn-confirm-enabled"
-    );
-  }
 }
 
 function deleteConfirmationDialog(task, itemType) {
@@ -575,43 +609,6 @@ function removeConfirmationModal() {
   main.querySelector("#confirmationModal")?.remove();
 }
 
-function focusInput(input) {
-  setTimeout(() => {
-    input.focus();
-  }, 0);
-}
-
-function addInput(text, container) {
-  const adderContainer = document.createElement("div");
-  adderContainer.classList.add("modal__adder-container");
-
-  const input = document.createElement("textarea");
-  input.style.resize = "none";
-  input.classList.add("modal__adder-input");
-  input.rows = 3;
-  input.placeholder = "Descripcion";
-  if (text) {
-    input.value = text;
-  }
-
-  const deleteAdderBtn = document.createElement("button");
-  deleteAdderBtn.type = "button";
-  deleteAdderBtn.title = "eliminar tarea";
-  deleteAdderBtn.classList.add("modal__adder-btn");
-  deleteAdderBtn.innerText = "X";
-  deleteAdderBtn.addEventListener("click", deleteInput);
-  let containerInputs;
-  adderContainer.append(input, deleteAdderBtn);
-  if (container !== undefined) {
-    containerInputs = container;
-  } else {
-    containerInputs = document
-      .querySelector(".modal")
-      .querySelector(".modal__inputs");
-  }
-
-  containerInputs.appendChild(adderContainer);
-}
 // para mañana
 // crear modal para cada tipo de tarea ✅
 //  terminar las funciones
