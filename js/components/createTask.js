@@ -1,6 +1,11 @@
 import { auxiliar, setAuxiliar } from "../services/todoService.js";
-import modal from "./modal.js";
 import { deleteConfirmationDialog, cancel } from "../services/todoService.js";
+
+let modalCallback = null;
+
+export function setModalCallback(callback) {
+  modalCallback = callback;
+}
 
 function createTask(description, containerTask) {
   const li = document.createElement("li");
@@ -38,7 +43,7 @@ function createTask(description, containerTask) {
 
     if (!document.querySelector(".modal")) {
       setAuxiliar(task);
-      modal("edit-task", task);
+      modalCallback("edit-task", task);
       document.querySelector(".modal").classList.add("open");
     } else if (document.querySelector(".modal")) {
       if (auxiliar.title?.length) {
@@ -48,7 +53,7 @@ function createTask(description, containerTask) {
       }
 
       setAuxiliar(task);
-      modal("edit-task", task);
+      modalCallback("edit-task", task);
       document.querySelector(".modal").classList.add("open");
     }
   });

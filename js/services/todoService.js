@@ -1,19 +1,28 @@
 const main = document.querySelector(".container-main");
 export let auxiliar;
 export let modalKeyListener;
-import createGroup from "../components/createGroup.js";
-import createTask from "../components/createTask.js";
 const containerBtnAddTask = document.querySelector(".container-create-task");
+
+let createTaskCallback = null;
+let createGroupCallback = null;
+
+export function setCreateTaskCallback(callback) {
+  createTaskCallback = callback;
+}
+
+export function setCreateGroupCallback(callback) {
+  createGroupCallback = callback;
+}
 
 export function deleteTask(task) {
   task.remove();
 }
 export function editTask(description, position) {
-  createTask(description, position);
+  createTaskCallback(description, position);
 }
 export function editGrup(container, title, tasks) {
   const index = container;
-  createGroup(title, tasks, index);
+  createGroupCallback(title, tasks, index);
 }
 
 export function deleteConfirmationDialog(task, itemType) {
@@ -58,9 +67,9 @@ export function cancel(modalMode, taks) {
         arrayTask.push(taks[key]);
       }
     });
-    createGroup(taks.title, arrayTask, taks.containerTask);
+    createGroupCallback(taks.title, arrayTask, taks.containerTask);
   } else if (taks !== undefined && modalMode === "edit-task") {
-    createTask(taks.task1, taks.containerTask);
+    createTaskCallback(taks.task1, taks.containerTask);
   } else {
     modalContainer.remove();
   }

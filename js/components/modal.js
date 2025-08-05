@@ -1,5 +1,3 @@
-import createTask from "./createTask.js";
-import createGroup from "./createGroup.js";
 import {
   editTask,
   editGrup,
@@ -8,6 +6,17 @@ import {
 } from "../services/todoService.js";
 const list = document.getElementById("list");
 const containerBtnAddTask = document.querySelector(".container-create-task");
+
+let createTaskCallback = null;
+let createGroupCallback = null;
+
+export function setCreateTaskCallback(callback) {
+  createTaskCallback = callback;
+}
+
+export function setCreateGroupCallback(callback) {
+  createGroupCallback = callback;
+}
 
 function modal(modalMode, itemToEdit = {}) {
   if (modalKeyListener) {
@@ -25,9 +34,9 @@ function modal(modalMode, itemToEdit = {}) {
           arrayTask.push(taks[key]);
         }
       });
-      createGroup(taks.title, arrayTask, taks.containerTask);
+      createGroupCallback(taks.title, arrayTask, taks.containerTask);
     } else if (taks !== undefined && modalMode === "edit-task") {
-      createTask(taks.task1, taks.containerTask);
+      createTaskCallback(taks.task1, taks.containerTask);
     } else {
       modalContainer.remove();
     }
@@ -54,7 +63,7 @@ function modal(modalMode, itemToEdit = {}) {
         }
       });
       if (modalMode === "create-grup-task") {
-        createGroup(title, tasks);
+        createGroupCallback(title, tasks);
       } else {
         editGrup(containerTask, title, tasks);
       }
@@ -63,7 +72,7 @@ function modal(modalMode, itemToEdit = {}) {
       editTask(description, containerTask.containerTask);
     } else if (modalMode === "create-task") {
       const description = modalContainer.querySelector("textarea").value;
-      createTask(description);
+      createTaskCallback(description);
     }
     modalContainer.remove();
     if (modalKeyListener) {

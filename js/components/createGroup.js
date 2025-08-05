@@ -1,7 +1,17 @@
 import { auxiliar, setAuxiliar } from "../services/todoService.js";
-import modal from "./modal.js";
-import createTask from "./createTask.js";
 import { deleteConfirmationDialog, cancel } from "../services/todoService.js";
+
+let createTaskCallback = null;
+let modalCallback = null;
+
+export function setCreateTaskCallback(callback) {
+  createTaskCallback = callback;
+}
+
+export function setModalCallback(callback) {
+  modalCallback = callback;
+}
+
 function createGroup(title, tasks, position) {
   function toggleTask(e) {
     const isOpen = e.currentTarget.classList.toggle("open");
@@ -56,7 +66,7 @@ function createGroup(title, tasks, position) {
     grupTask["containerTask"] = Array.from(list.children).indexOf(component);
     if (!document.querySelector(".modal")) {
       setAuxiliar(grupTask);
-      modal("edit-grup-task", grupTask);
+      modalCallback("edit-grup-task", grupTask);
     } else if (document.querySelector(".modal")) {
       if (auxiliar.title?.length) {
         cancel("edit-grup-task", auxiliar);
@@ -64,7 +74,7 @@ function createGroup(title, tasks, position) {
         cancel("edit-task", auxiliar);
       }
       setAuxiliar(grupTask);
-      modal("edit-grup-task", grupTask);
+      modalCallback("edit-grup-task", grupTask);
     }
   });
 
@@ -92,7 +102,7 @@ function createGroup(title, tasks, position) {
   containerTask.classList.add("list--grup-off");
 
   tasks.forEach((description) => {
-    createTask(description, containerTask);
+    createTaskCallback(description, containerTask);
   });
 
   const container = document.createElement("li");
